@@ -1,24 +1,33 @@
 package com.nirmal.blog.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nirmal.blog.model.Comment;
 import com.nirmal.blog.model.Post;
-import com.nirmal.blog.service.*;
+import com.nirmal.blog.service.ActionExpiredException;
+import com.nirmal.blog.service.AlreadyVotedException;
+import com.nirmal.blog.service.CommentService;
+import com.nirmal.blog.service.PostService;
+import com.nirmal.blog.service.UserService;
 import com.nirmal.blog.utils.JsonUtils;
 
-import javax.validation.Valid;
-
-import java.util.List;
-
 @Controller
-public class CommentController {
-
+public class CommentController 
+{
     @Autowired
     private PostService postService;
 
@@ -29,7 +38,8 @@ public class CommentController {
     private CommentService commentService;
 
     @RequestMapping(value = "/posts/{postId}/comments", method = RequestMethod.GET)
-    public String showComments(@PathVariable("postId") Long postId, ModelMap model) {
+    public String showComments(@PathVariable("postId") Long postId, ModelMap model) 
+    {
         Post post = postService.getPost(postId);
 
         if (post == null)
@@ -50,8 +60,10 @@ public class CommentController {
     @RequestMapping(value = "/posts/{postId}/comments/create", method = RequestMethod.POST)
     public @ResponseBody String addComment(@Valid @ModelAttribute(value = "comment") Comment comment, BindingResult result,
                                            @PathVariable("postId") Long postId,
-                                           @RequestParam(value = "parentId", defaultValue = "") Long parentId) {
-        if (result.hasErrors()) {
+                                           @RequestParam(value = "parentId", defaultValue = "") Long parentId) 
+    {
+        if (result.hasErrors()) 
+        {
             return makeCommentAddResponse("error", result.getAllErrors().get(0).getDefaultMessage());
         }
 
@@ -70,10 +82,14 @@ public class CommentController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/comments/{commentId}/delete", method = RequestMethod.POST)
-    public @ResponseBody String deleteComment(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        try {
+    public @ResponseBody String deleteComment(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) 
+    {
+        try 
+        {
             commentService.deleteComment(commentId);
-        } catch (ActionExpiredException e) {
+        }
+        catch (ActionExpiredException e) 
+        {
             return "expired";
         }
 
@@ -83,14 +99,19 @@ public class CommentController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/comments/{commentId}/edit", method = RequestMethod.POST)
     public @ResponseBody String editComment(@Valid @ModelAttribute(value = "comment") Comment comment, BindingResult result,
-                                            @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        if (result.hasErrors()) {
+                                            @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) 
+    {
+        if (result.hasErrors()) 
+        {
             return result.getAllErrors().get(0).getDefaultMessage();
         }
 
-        try {
+        try 
+        {
             commentService.updateComment(comment, commentId);
-        } catch (ActionExpiredException e) {
+        }
+        catch (ActionExpiredException e) 
+        {
             return "expired";
         }
 
@@ -111,13 +132,18 @@ public class CommentController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/comments/{commentId}/like", method = RequestMethod.POST)
-    public @ResponseBody String like(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        try {
+    public @ResponseBody String like(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) 
+    {
+        try
+        {
             commentService.vote(commentId, true);
-        } catch (AlreadyVotedException e) {
+        } 
+        catch (AlreadyVotedException e) 
+        {
             return "already_voted";
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e)
+        {
             return "own_comment";
         }
 
@@ -126,35 +152,44 @@ public class CommentController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/comments/{commentId}/dislike", method = RequestMethod.POST)
-    public @ResponseBody String dislike(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        try {
+    public @ResponseBody String dislike(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) 
+    {
+        try 
+        {
             commentService.vote(commentId, false);
-        } catch (AlreadyVotedException e) {
+        } 
+        catch (AlreadyVotedException e) 
+        {
             return "already_voted";
         }
-        catch (ForbiddenException e) {
+        catch (ForbiddenException e) 
+        {
             return "own_comment";
         }
 
         return "ok";
     }
 
-    private String makeCommentAddResponse(String status, String msg, Long id) {
+    private String makeCommentAddResponse(String status, String msg, Long id) 
+    {
         return "{" + JsonUtils.toJsonField("status", status) +
                 (id == null ? "" : (", " + JsonUtils.toJsonField("id", id.toString()))) +
                 (msg == null ? "" : (", " + JsonUtils.toJsonField("message", msg))) +
                 "}";
     }
 
-    private String makeCommentAddResponse(String status, Long id) {
+    private String makeCommentAddResponse(String status, Long id) 
+    {
         return makeCommentAddResponse(status, null, id);
     }
 
-    private String makeCommentAddResponse(String status, String msg) {
+    private String makeCommentAddResponse(String status, String msg) 
+    {
         return makeCommentAddResponse(status, msg, null);
     }
 
-    private String makeCommentAddResponse(String status) {
+    private String makeCommentAddResponse(String status) 
+    {
         return makeCommentAddResponse(status, null, null);
     }
 

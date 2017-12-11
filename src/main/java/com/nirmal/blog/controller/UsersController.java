@@ -22,7 +22,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Controller
-public class UsersController {
+public class UsersController 
+{
 
     @Autowired
     private UserService userService;
@@ -34,10 +35,12 @@ public class UsersController {
     private Validator userValidator;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String showRegistrationForm(ModelMap model, HttpServletRequest request, HttpSession session) {
+    public String showRegistrationForm(ModelMap model, HttpServletRequest request, HttpSession session) 
+    {
         model.addAttribute("user", new User());
 
-        if (userService.isAuthenticated()) {
+        if (userService.isAuthenticated()) 
+        {
             return "redirect:posts";
         }
 
@@ -50,7 +53,8 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String registerUser(@Validated({User.CreateValidationGroup.class}) @ModelAttribute(value = "user") User user, BindingResult result, HttpSession session) {
+    public String registerUser(@Validated({User.CreateValidationGroup.class}) @ModelAttribute(value = "user") User user, BindingResult result, HttpSession session)
+    {
         user.setUsername(StringUtils.trimWhitespace(user.getUsername()));
         user.setEmail(StringUtils.trimWhitespace(user.getEmail()));
 
@@ -71,21 +75,26 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/check_email", method = RequestMethod.GET)
-    public @ResponseBody String checkEmail(@RequestParam("email") String email) {
+    public @ResponseBody String checkEmail(@RequestParam("email") String email) 
+    {
         return userService.emailExists(email) ? "false" : "true";
     }
 
     @RequestMapping(value = "/check_username", method = RequestMethod.GET)
-    public @ResponseBody String checkUsername(@RequestParam("username") String username) {
+    public @ResponseBody String checkUsername(@RequestParam("username") String username) 
+    {
         return userService.usernameExists(username) ? "false" : "true";
     }
 
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
-    public String showEditSettingsPage(ModelMap model) {
-        if (!model.containsAttribute("user")) {
+    public String showEditSettingsPage(ModelMap model) 
+    {
+        if (!model.containsAttribute("user")) 
+        {
             User user = userService.currentUser();
 
-            if (user == null) {
+            if (user == null) 
+            {
                 return "redirect:posts";
             }
 
@@ -98,22 +107,29 @@ public class UsersController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/change_email", method = RequestMethod.POST)
     public String changeEmail(@Validated({User.ChangeEmailValidationGroup.class}) @ModelAttribute(value = "user") User user, BindingResult result,
-                              @RequestParam("currentPassword") String currentPassword, RedirectAttributes redirectAttributes, ModelMap model) {
+                              @RequestParam("currentPassword") String currentPassword, RedirectAttributes redirectAttributes, ModelMap model) 
+    {
         model.addAttribute("isEmailForm", true);
 
         user.setEmail(StringUtils.trimWhitespace(user.getEmail()));
 
         userValidator.validate(user, result);
 
-        if (!result.hasErrors()) {
-            try {
+        if (!result.hasErrors()) 
+        {
+            try 
+            {
                 userService.changeEmail(user.getEmail(), currentPassword);
-            } catch (AuthException e) {
+            } 
+            catch (AuthException e) 
+            
+            {
                 result.rejectValue("password", "NotMatchCurrent");
             }
         }
 
-        if (result.hasErrors()) {
+        if (result.hasErrors())
+        {
             return "settings";
         }
 
@@ -126,20 +142,25 @@ public class UsersController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/change_password", method = RequestMethod.POST)
     public String changePassword(@Validated({User.ChangePasswordValidationGroup.class}) @ModelAttribute(value = "user") User user, BindingResult result,
-                              @RequestParam("currentPassword") String currentPassword, RedirectAttributes redirectAttributes, ModelMap model) {
+                              @RequestParam("currentPassword") String currentPassword, RedirectAttributes redirectAttributes, ModelMap model) 
+    {
         model.addAttribute("isPasswordForm", true);
 
-        if (!result.hasErrors()) {
+        if (!result.hasErrors()) 
+        {
             try {
                 userService.changePassword(user.getPassword(), currentPassword);
-            } catch (AuthException e) {
+            }
+            catch (AuthException e)
+            {
                 result.rejectValue("password", "NotMatchCurrent");
             }
         }
 
         user.setEmail(userService.currentUser().getEmail()); // quick workaround to show e-mail in the e-mail form
 
-        if (result.hasErrors()) {
+        if (result.hasErrors()) 
+        {
             return "settings";
         }
 
@@ -151,10 +172,12 @@ public class UsersController {
 
     @RequestMapping(value = "/edit_profile", method = RequestMethod.GET)
     public String showEditProfilePage(ModelMap model) {
-        if (!model.containsAttribute("user")) {
+        if (!model.containsAttribute("user")) 
+        {
             User user = userService.currentUser();
 
-            if (user == null) {
+            if (user == null)
+            {
                 return "redirect:posts";
             }
 
@@ -168,7 +191,8 @@ public class UsersController {
     @RequestMapping(value = "/edit_profile", method = RequestMethod.POST)
     public String editProfile(@Validated({User.ProfileInfoValidationGroup.class}) @ModelAttribute(value = "user") User user, BindingResult result,
                               RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
+        if (result.hasErrors()) 
+        {
             // quick workaround to show avatar
             User currentUser = userService.currentUser();
             user.setBigAvatarLink(currentUser.getBigAvatarLink());
@@ -185,8 +209,10 @@ public class UsersController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/upload_avatar", method = RequestMethod.POST)
-    public @ResponseBody String uploadAvatar(@RequestParam("avatarFile") MultipartFile file) throws IOException {
-        try {
+    public @ResponseBody String uploadAvatar(@RequestParam("avatarFile") MultipartFile file) throws IOException 
+    {
+        try 
+        {
             UploadedAvatarInfo result = avatarService.upload(file);
 
             userService.changeAvatar(result);
@@ -206,7 +232,8 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
-    public String showProfile(@PathVariable("username") String username, ModelMap model) {
+    public String showProfile(@PathVariable("username") String username, ModelMap model) 
+    {
         User user = userService.findByUsername(username);
 
         if (user == null)
@@ -217,7 +244,8 @@ public class UsersController {
         return "profile";
     }
 
-    private String makeAvatarUploadResponse(String status, UploadedAvatarInfo uploadedAvatarInfo) {
+    private String makeAvatarUploadResponse(String status, UploadedAvatarInfo uploadedAvatarInfo) 
+    {
         return "{" + JsonUtils.toJsonField("status", status) +
                 (uploadedAvatarInfo == null ? "" : (", " + JsonUtils.toJsonField("link", uploadedAvatarInfo.bigImageLink))) +
                 "}";

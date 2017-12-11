@@ -4,5 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nirmal.blog.model.Comment;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+
+public interface CommentRepository extends JpaRepository<Comment, Long> 
+{
+	
 }

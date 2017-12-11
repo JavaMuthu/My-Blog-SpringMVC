@@ -7,8 +7,13 @@ import com.nirmal.blog.model.PostEditDto;
 
 import java.util.List;
 
-public interface PostService {
-
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public interface PostService 
+{
     Page<Post> getPostsPage(int pageNumber, int pageSize);
 
     List<Post> getPostsList(int pageNumber, int pageSize);

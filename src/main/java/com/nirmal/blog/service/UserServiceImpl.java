@@ -1,5 +1,9 @@
 package com.nirmal.blog.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,13 +22,15 @@ import com.nirmal.blog.model.User;
 import com.nirmal.blog.repository.RoleRepository;
 import com.nirmal.blog.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+/**
+ * 
+ * @author muthu_m
+ *
+ */
 
 @Service("userService")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService 
+{
 
     @Autowired
     private UserRepository userRepository;
@@ -36,14 +42,16 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException
+    {
         User user = userRepository.findByUsernameOrEmail(s, s);
 
         if (user == null)
             throw new UsernameNotFoundException("no such user");
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : user.getRoles()) {
+        for (Role role : user.getRoles()) 
+        {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
@@ -52,27 +60,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(String email)
+    {
         return userRepository.findByEmailIgnoreCase(email);
     }
 
     @Override
-    public User findByUsername(String username) {
+    public User findByUsername(String username) 
+    {
         return userRepository.findByUsernameIgnoreCase(username);
     }
 
     @Override
-    public boolean usernameExists(String username) {
+    public boolean usernameExists(String username) 
+    {
         return findByUsername(username) != null;
     }
 
     @Override
-    public boolean emailExists(String email) {
+    public boolean emailExists(String email) 
+    {
         return findByEmail(email) != null;
     }
 
     @Override
-    public void register(User user) {
+    public void register(User user) 
+    {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         user.getRoles().add(roleRepository.findByName("ROLE_USER"));
@@ -85,7 +98,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeEmail(String newEmail, String currentPassword) throws AuthException {
+    public void changeEmail(String newEmail, String currentPassword) throws AuthException 
+    {
         User user = currentUser();
         if (!passwordEncoder.matches(currentPassword, user.getPassword()))
             throw new AuthException("password does not match");
@@ -96,7 +110,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(String newPassword, String currentPassword) throws AuthException {
+    public void changePassword(String newPassword, String currentPassword) throws AuthException 
+    {
         User user = currentUser();
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword()))
@@ -108,7 +123,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeProfileInfo(User newProfileInfo) {
+    public void changeProfileInfo(User newProfileInfo) 
+    {
         User user = currentUser();
 
         user.setAboutText(newProfileInfo.getAboutText());
@@ -119,7 +135,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeAvatar(UploadedAvatarInfo uploadedAvatarInfo) {
+    public void changeAvatar(UploadedAvatarInfo uploadedAvatarInfo) 
+    {
         User user = currentUser();
 
         user.setBigAvatarLink(uploadedAvatarInfo.bigImageLink);
@@ -130,7 +147,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeAvatar() {
+    public void removeAvatar() 
+    {
         User user = currentUser();
 
         user.setBigAvatarLink(null);
@@ -141,7 +159,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void authenticate(User user) {
+    public void authenticate(User user)
+    {
         UserDetails userDetails = loadUserByUsername(user.getUsername());
 
         Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -149,7 +168,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isAuthenticated() {
+    public boolean isAuthenticated() 
+    {
         SecurityContext securityContext = SecurityContextHolder.getContext();
 
         Authentication auth = securityContext.getAuthentication();
@@ -158,14 +178,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isAdmin() {
+    public boolean isAdmin() 
+    {
         User user = currentUser();
 
         return user != null && user.hasRole("ROLE_ADMIN");
     }
 
     @Override
-    public User currentUser() {
+    public User currentUser() 
+    {
         if (!isAuthenticated())
             return null;
 
@@ -176,11 +198,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsernameIgnoreCase(auth.getName());
     }
 
-    public PasswordEncoder getPasswordEncoder() {
+    public PasswordEncoder getPasswordEncoder() 
+    {
         return passwordEncoder;
     }
 
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) 
+    {
         this.passwordEncoder = passwordEncoder;
     }
 }

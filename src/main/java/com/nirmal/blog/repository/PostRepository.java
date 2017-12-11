@@ -11,7 +11,13 @@ import com.nirmal.blog.model.Post;
 import java.util.Collection;
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public interface PostRepository extends JpaRepository<Post, Long> 
+{
 
     Page<Post> findByHiddenFalse(Pageable pageable);
 

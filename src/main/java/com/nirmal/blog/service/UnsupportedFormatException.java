@@ -1,8 +1,12 @@
 package com.nirmal.blog.service;
 
-public class UnsupportedFormatException extends Exception {
+public class UnsupportedFormatException extends Exception
+{
 
-    public UnsupportedFormatException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public UnsupportedFormatException(String message)
+	{
         super(message);
     }
 }

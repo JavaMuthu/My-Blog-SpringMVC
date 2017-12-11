@@ -10,30 +10,37 @@ import com.nirmal.blog.model.User;
 import com.nirmal.blog.service.UserService;
 
 @Component("userValidator")
-public class UserValidator implements Validator {
+public class UserValidator implements Validator 
+{
 
     @Autowired
     UserService userService;
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(Class<?> aClass) 
+    {
         return User.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
+    public void validate(Object o, Errors errors) 
+    {
         User user = (User) o;
 
-        if (!StringUtils.isEmpty(user.getUsername())) {
-            if (userService.usernameExists(user.getUsername())) {
+        if (!StringUtils.isEmpty(user.getUsername()))
+        {
+            if (userService.usernameExists(user.getUsername()))
+            {
                 errors.rejectValue("username", "Registered");
             }
         }
 
-        if (!StringUtils.isEmpty(user.getEmail())) {
+        if (!StringUtils.isEmpty(user.getEmail()))
+        {
             User currentUser = userService.currentUser();
 
-            if (currentUser == null || !currentUser.getEmail().equalsIgnoreCase(user.getEmail())) {
+            if (currentUser == null || !currentUser.getEmail().equalsIgnoreCase(user.getEmail())) 
+            {
                 if (userService.emailExists(user.getEmail())) {
                     errors.rejectValue("email", "Registered");
                 }

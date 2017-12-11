@@ -4,8 +4,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.nirmal.blog.model.User;
 
-public interface UserService extends UserDetailsService {
-
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public interface UserService extends UserDetailsService
+{
     User findByEmail(String email);
 
     User findByUsername(String username);

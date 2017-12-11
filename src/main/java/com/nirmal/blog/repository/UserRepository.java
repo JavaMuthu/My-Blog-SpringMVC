@@ -4,7 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nirmal.blog.model.User;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public interface UserRepository extends JpaRepository<User, Long> 
+{
 
     User findByUsernameIgnoreCase(String username);
 

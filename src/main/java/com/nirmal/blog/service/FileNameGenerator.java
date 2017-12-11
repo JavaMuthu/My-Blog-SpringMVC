@@ -1,6 +1,13 @@
 package com.nirmal.blog.service;
 
-public interface FileNameGenerator {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+
+public interface FileNameGenerator 
+{
 
     String getFileName(String filename, String prefix);
 }

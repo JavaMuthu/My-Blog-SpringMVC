@@ -10,8 +10,15 @@ import com.nirmal.blog.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 
+
+/**
+ * 
+ * @author muthu_m
+ *
+ */
 @Service("commentService")
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl implements CommentService 
+{
 
     @Autowired
     private UserService userService;
@@ -25,13 +32,16 @@ public class CommentServiceImpl implements CommentService {
     private static final int MAX_COMMENT_LEVEL = 5;
 
     @Override
-    public Comment getComment(Long id) {
+    public Comment getComment(Long id)
+    {
         return commentRepository.findOne(id);
     }
 
     @Override
-    public Long saveNewComment(Comment comment, Post post, Long parentId) {
-        if (parentId != null) {
+    public Long saveNewComment(Comment comment, Post post, Long parentId)
+    {
+        if (parentId != null)
+        {
             Comment parentComment = getComment(parentId);
 
             int level = parentComment.commentLevel();
@@ -51,16 +61,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long commentId) throws ActionExpiredException {
+    public void deleteComment(Long commentId) throws ActionExpiredException
+    {
         Comment comment = getComment(commentId);
 
         boolean isAdmin = userService.isAdmin();
 
-        if (!isAdmin && !userService.currentUser().getUsername().equals(comment.getUser().getUsername())) {
+        if (!isAdmin && !userService.currentUser().getUsername().equals(comment.getUser().getUsername()))
+        {
             throw new ForbiddenException();
         }
 
-        if (!isAdmin && !comment.userCanDelete()) {
+        if (!isAdmin && !comment.userCanDelete()) 
+        {
             throw new ActionExpiredException("delete time exceeded");
         }
 
@@ -70,16 +83,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateComment(Comment newCommentData, Long commentId) throws ActionExpiredException {
+    public void updateComment(Comment newCommentData, Long commentId) throws ActionExpiredException 
+    {
         Comment comment = getComment(commentId);
 
         boolean isAdmin = userService.isAdmin();
 
-        if (!isAdmin && !userService.currentUser().getUsername().equals(comment.getUser().getUsername())) {
+        if (!isAdmin && !userService.currentUser().getUsername().equals(comment.getUser().getUsername()))
+        {
             throw new ForbiddenException();
         }
 
-        if (!isAdmin && !comment.userCanEdit()) {
+        if (!isAdmin && !comment.userCanEdit()) 
+        {
             throw new ActionExpiredException("edit time exceeded");
         }
 
@@ -91,18 +107,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void vote(Long commentId, boolean like) throws AlreadyVotedException, ForbiddenException {
+    public void vote(Long commentId, boolean like) throws AlreadyVotedException, ForbiddenException
+    {
         User currentUser = userService.currentUser();
 
         Comment comment = getComment(commentId);
 
-        if (currentUser.getId().longValue() == comment.getUser().getId().longValue()) {
+        if (currentUser.getId().longValue() == comment.getUser().getId().longValue())
+        {
             throw new ForbiddenException("cannot vote for own comments");
         }
 
         CommentRating rating = commentRatingRepository.findUserRating(commentId, currentUser.getId());
 
-        if (rating != null) {
+        if (rating != null) 
+        {
             throw new AlreadyVotedException("cannot vote more than once");
         }
 

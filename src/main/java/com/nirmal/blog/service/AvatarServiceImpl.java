@@ -1,5 +1,13 @@
 package com.nirmal.blog.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,30 +15,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
+/**
+ * 
+ * @author muthu_m
+ *
+ */
 
 @Service("avatarService")
-public class AvatarServiceImpl implements AvatarService {
-
+public class AvatarServiceImpl implements AvatarService
+{
     @Value("${uploading.dirpath}")
     private String uploadingDirPath;
 
     @Autowired
     private FileNameGenerator fileNameGenerator;
 
-    public AvatarServiceImpl() {
+    public AvatarServiceImpl() 
+    {
         ImageIO.setUseCache(false);
     }
 
     public final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
     @Override
-    public UploadedAvatarInfo upload(MultipartFile file) throws IOException, UnsupportedFormatException {
+    public UploadedAvatarInfo upload(MultipartFile file) throws IOException, UnsupportedFormatException 
+    {
         String fileName = file.getOriginalFilename();
         String ext = FilenameUtils.getExtension(fileName).toLowerCase();
 
@@ -56,7 +65,8 @@ public class AvatarServiceImpl implements AvatarService {
         return new UploadedAvatarInfo(bigImageName, smallImageName);
     }
 
-    private BufferedImage resize(BufferedImage image, int size) {
+    private BufferedImage resize(BufferedImage image, int size) 
+    {
         BufferedImage result = Scalr.resize(image, Scalr.Mode.FIT_EXACT, size, size);
 
         // would be better to crop image if not square, instead of just resizing without preserving proportions
@@ -64,11 +74,13 @@ public class AvatarServiceImpl implements AvatarService {
         return result;
     }
 
-    public FileNameGenerator getFileNameGenerator() {
+    public FileNameGenerator getFileNameGenerator() 
+    {
         return fileNameGenerator;
     }
 
-    public void setFileNameGenerator(FileNameGenerator fileNameGenerator) {
+    public void setFileNameGenerator(FileNameGenerator fileNameGenerator) 
+    {
         this.fileNameGenerator = fileNameGenerator;
     }
 }

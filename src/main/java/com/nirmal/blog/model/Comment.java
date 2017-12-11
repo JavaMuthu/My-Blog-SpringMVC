@@ -13,9 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+
 @Entity
 @Table(name = "tbl_comments")
-public class Comment {
+public class Comment 
+{
 
     @javax.persistence.Id
     @GeneratedValue
@@ -60,7 +67,8 @@ public class Comment {
 
     private List<CommentRating> commentRatings = new ArrayList<>();
 
-    public int commentLevel() {
+    public int commentLevel() 
+    {
         Comment comment = this;
         int level = 0;
         while ((comment = comment.getParentComment()) != null)
@@ -68,17 +76,20 @@ public class Comment {
         return level;
     }
 
-    public boolean userCanDelete() {
+    public boolean userCanDelete()
+    {
         return LocalDateTime.now().isBefore(maxDeleteTime());
     }
 
-    public LocalDateTime maxDeleteTime() {
+    public LocalDateTime maxDeleteTime() 
+    {
         return dateTime.plusMinutes(10);
     }
 
     // should refactor to store dates in UTC in database
 
-    public long maxDeleteTimeUnixTimestamp() {
+    public long maxDeleteTimeUnixTimestamp() 
+    {
         return maxDeleteTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
@@ -86,19 +97,23 @@ public class Comment {
         return LocalDateTime.now().isBefore(maxEditTime());
     }
 
-    public LocalDateTime maxEditTime() {
+    public LocalDateTime maxEditTime()
+    {
         return dateTime.plusMinutes(180);
     }
 
-    public long maxEditTimeUnixTimestamp() {
+    public long maxEditTimeUnixTimestamp() 
+    {
         return maxEditTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
-    public int getRatingSum() {
+    public int getRatingSum()
+    {
         return commentRatings.stream().mapToInt(Rating::getValue).sum();
     }
 
-    public short getUserVoteValue(Long userId) {
+    public short getUserVoteValue(Long userId)
+    {
         if (userId == null)
             return 0;
 
@@ -106,87 +121,108 @@ public class Comment {
         return rating.isPresent() ? rating.get().getValue() : 0;
     }
 
-    public Long getId() {
+    public Long getId() 
+    {
         return Id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         Id = id;
     }
 
-    public String getCommentText() {
+    public String getCommentText()
+    {
         return commentText;
     }
 
-    public String getCommentTextHtml() {
+    public String getCommentTextHtml()
+    {
         return MarkdownConverter.toHtml(getCommentText());
     }
 
-    public LocalDateTime getDateTime() {
+    public LocalDateTime getDateTime() 
+    {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(LocalDateTime dateTime) 
+    {
         this.dateTime = dateTime;
     }
 
-    public LocalDateTime getModifiedDateTime() {
+    public LocalDateTime getModifiedDateTime()
+    {
         return modifiedDateTime;
     }
 
-    public void setModifiedDateTime(LocalDateTime modifiedDateTime) {
+    public void setModifiedDateTime(LocalDateTime modifiedDateTime)
+    {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public void setCommentText(String commentText) {
+    public void setCommentText(String commentText) 
+    {
         this.commentText = commentText;
     }
 
-    public User getUser() {
+    public User getUser() 
+    {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user)
+    {
         this.user = user;
     }
 
-    public Post getPost() {
+    public Post getPost() 
+    {
         return post;
     }
 
-    public void setPost(Post post) {
+    public void setPost(Post post)
+    {
         this.post = post;
     }
 
-    public boolean isDeleted() {
+    public boolean isDeleted() 
+    {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(boolean deleted) 
+    {
         this.deleted = deleted;
     }
 
-    public Comment getParentComment() {
+    public Comment getParentComment() 
+    {
         return parentComment;
     }
 
-    public void setParentComment(Comment parentComment) {
+    public void setParentComment(Comment parentComment)
+    {
         this.parentComment = parentComment;
     }
 
-    public List<Comment> getChildrenComments() {
+    public List<Comment> getChildrenComments() 
+    {
         return childrenComments;
     }
 
-    public void setChildrenComments(List<Comment> childrenComments) {
+    public void setChildrenComments(List<Comment> childrenComments) 
+    {
         this.childrenComments = childrenComments;
     }
 
-    public List<CommentRating> getCommentRatings() {
+    public List<CommentRating> getCommentRatings() 
+    {
         return commentRatings;
     }
 
-    public void setCommentRatings(List<CommentRating> commentRatings) {
+    public void setCommentRatings(List<CommentRating> commentRatings)
+    {
         this.commentRatings = commentRatings;
     }
 }

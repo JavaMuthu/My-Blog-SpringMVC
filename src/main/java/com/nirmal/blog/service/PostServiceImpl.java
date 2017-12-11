@@ -16,6 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 
+ * @author muthu_m
+ *
+ */
 @Service("postService")
 public class PostServiceImpl implements PostService
 {
@@ -32,7 +37,8 @@ public class PostServiceImpl implements PostService
     private UserService userService;
 
     @Override
-    public Page<Post> getPostsPage(int pageNumber, int pageSize) {
+    public Page<Post> getPostsPage(int pageNumber, int pageSize) 
+    {
         PageRequest pageRequest = new PageRequest(pageNumber, pageSize, Sort.Direction.DESC, "dateTime");
 
         if (userService.isAdmin())
@@ -42,7 +48,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public List<Post> getPostsList(int pageNumber, int pageSize) {
+    public List<Post> getPostsList(int pageNumber, int pageSize) 
+    {
         PageRequest pageRequest = new PageRequest(pageNumber, pageSize, Sort.Direction.DESC, "dateTime");
 
         return postRepository.findByHiddenIs(false, pageRequest);
@@ -50,19 +57,22 @@ public class PostServiceImpl implements PostService
 
     // probably needs to be cached somehow
     @Override
-    public List<Post> getTopPostsList() {
+    public List<Post> getTopPostsList()
+    {
         PageRequest pageRequest = new PageRequest(0, 10);
 
         return postRepository.findTopPosts(pageRequest);
     }
 
     @Override
-    public Post getPost(Long id) {
+    public Post getPost(Long id)
+    {
         return postRepository.findOne(id);
     }
 
     @Override
-    public PostEditDto getEditablePost(Long id) {
+    public PostEditDto getEditablePost(Long id)
+    {
         Post post = getPost(id);
 
         if (post == null)
@@ -72,7 +82,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public Page<Post> findPostsByTag(List<String> tags, int pageNumber, int pageSize) {
+    public Page<Post> findPostsByTag(List<String> tags, int pageNumber, int pageSize) 
+    {
         tags = tags.stream().map(String::toLowerCase).collect(Collectors.toList());
 
         PageRequest pageRequest = new PageRequest(pageNumber, pageSize, Sort.Direction.DESC, "dateTime");
@@ -84,7 +95,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public Post saveNewPost(PostEditDto postEditDto) {
+    public Post saveNewPost(PostEditDto postEditDto) 
+    {
         Post post = new Post();
 
         fillPost(post, postEditDto);
@@ -97,7 +109,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public Post updatePost(PostEditDto postEditDto) {
+    public Post updatePost(PostEditDto postEditDto)
+    {
         if (postEditDto.getId() == null)
             throw new IllegalArgumentException("cannot update without id");
 
@@ -111,7 +124,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public void setPostVisibility(Long postId, boolean hide) {
+    public void setPostVisibility(Long postId, boolean hide)
+    {
         Post post = getPost(postId);
 
         post.setHidden(hide);
@@ -120,7 +134,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId)
+    {
         Post post = getPost(postId);
 
         postRepository.delete(post);
@@ -129,7 +144,8 @@ public class PostServiceImpl implements PostService
     }
 
     @Override
-    public void vote(Long postId, boolean like) throws AlreadyVotedException {
+    public void vote(Long postId, boolean like) throws AlreadyVotedException
+    {
         User currentUser = userService.currentUser();
 
         Post post = getPost(postId);
@@ -149,7 +165,8 @@ public class PostServiceImpl implements PostService
         postRatingRepository.saveAndFlush(rating);
     }
 
-    private PostEditDto convertToPostEditDto(Post post) {
+    private PostEditDto convertToPostEditDto(Post post) 
+    {
         PostEditDto postEditDto = new PostEditDto();
 
         postEditDto.setId(post.getId());
@@ -161,24 +178,28 @@ public class PostServiceImpl implements PostService
         return postEditDto;
     }
 
-    private void fillPost(Post post, PostEditDto postEditDto) {
+    private void fillPost(Post post, PostEditDto postEditDto) 
+    {
         post.setId(postEditDto.getId());
         post.setTitle(postEditDto.getTitle());
         post.setFullPostText(postEditDto.getText());
 
         int cutInd = postEditDto.getText().indexOf(Post.shortPartSeparator());
-        if (cutInd > 0) {
+        if (cutInd > 0) 
+        {
             String shortText = postEditDto.getText().substring(0, cutInd);
 
             List<String> links = MarkdownConverter.extractLinks(postEditDto.getText());
 
-            if (!links.isEmpty()) {
+            if (!links.isEmpty())
+            {
                 shortText += "\n" + links.stream().collect(Collectors.joining("\n"));
             }
 
             post.setShortTextPart(shortText);
         }
-        else {
+        else
+        {
             post.setShortTextPart(null);
         }
 
@@ -186,10 +207,12 @@ public class PostServiceImpl implements PostService
 
         String[] tags = Arrays.stream(postEditDto.getTags().split(",")).map(String::trim).toArray(String[]::new);
 
-        for (String tagname: tags) {
+        for (String tagname: tags) 
+        {
             Tag tag = tagRepository.findByNameIgnoreCase(tagname);
 
-            if (tag == null) {
+            if (tag == null) 
+            {
                 tag = new Tag(tagname);
             }
 

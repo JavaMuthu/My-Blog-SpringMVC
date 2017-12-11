@@ -9,9 +9,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MarkdownConverter {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public class MarkdownConverter 
+{
 
-    public static String toHtml(String input) {
+    public static String toHtml(String input) 
+    {
         String html = Processor.process(input, true);
 
         String safeHtml = Jsoup.clean(html, Whitelist.basicWithImages());
@@ -19,12 +26,14 @@ public class MarkdownConverter {
         return safeHtml;
     }
 
-    public static List<String> extractLinks(String input) {
+    public static List<String> extractLinks(String input)
+    {
         Matcher m = Pattern.compile("\\s?\\s?\\[([^^\\]]+)\\]:\\s+(.+)$", Pattern.MULTILINE)
                 .matcher(input);
 
         List<String> links = new ArrayList<>();
-        while (m.find()) {
+        while (m.find()) 
+        {
             links.add(m.group());
         }
 

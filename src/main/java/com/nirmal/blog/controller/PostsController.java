@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class PostsController {
+public class PostsController 
+{
 
     @Autowired
     private UserService userService;
@@ -34,7 +35,8 @@ public class PostsController {
     private PostService postService;
 
     @RequestMapping(value = {"/", "/posts"}, method = RequestMethod.GET)
-    public String showPostsList(@RequestParam(value = "page", defaultValue = "0") Integer pageNumber, ModelMap model) {
+    public String showPostsList(@RequestParam(value = "page", defaultValue = "0") Integer pageNumber, ModelMap model)
+    {
         Page<Post> postsPage = postService.getPostsPage(pageNumber, 10);
 
         model.addAttribute("postsPage", postsPage);
@@ -48,14 +50,16 @@ public class PostsController {
     }
 
     @RequestMapping(value = {"/posts"}, method = RequestMethod.GET, headers="Accept=application/json", produces = "application/json;charset=UTF-8")
-    public @ResponseBody String getPostsList(@RequestParam(value = "page", defaultValue = "0") Integer pageNumber) {
+    public @ResponseBody String getPostsList(@RequestParam(value = "page", defaultValue = "0") Integer pageNumber)
+    {
         List<Post> posts = postService.getPostsList(pageNumber, 10);
 
         return "[" + posts.stream().map(this::toJsonLink).collect(Collectors.joining(", \n")) + "]";
     }
 
     @RequestMapping(value = {"/posts/top"}, method = RequestMethod.GET, headers="Accept=application/json", produces = "application/json;charset=UTF-8")
-    public @ResponseBody String getTopPostsList() {
+    public @ResponseBody String getTopPostsList() 
+    {
         List<Post> posts = postService.getTopPostsList();
 
         return "[" + posts.stream().map(this::toJsonLink).collect(Collectors.joining(", \n")) + "]";
@@ -63,10 +67,12 @@ public class PostsController {
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET, params = {"tagged"})
     public String searchByTag(@RequestParam("tagged") String tagsStr, @RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
-                              ModelMap model, HttpServletRequest request) {
+                              ModelMap model, HttpServletRequest request) 
+    {
         List<String> tagNames = Arrays.stream(tagsStr.split(",")).map(String::trim).distinct().collect(Collectors.toList());
 
-        if (tagNames.isEmpty()) {
+        if (tagNames.isEmpty()) 
+        {
             return "redirect:/posts";
         }
 
@@ -88,7 +94,8 @@ public class PostsController {
     }
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
-    public String showPost(@PathVariable("postId") Long postId, ModelMap model) {
+    public String showPost(@PathVariable("postId") Long postId, ModelMap model)
+    {
         Post post = postService.getPost(postId);
 
         if (post == null)
@@ -99,7 +106,8 @@ public class PostsController {
 
         model.addAttribute("post", post);
 
-        if (userService.isAuthenticated()) {
+        if (userService.isAuthenticated()) 
+        {
             model.addAttribute("comment", new Comment());
         }
 
@@ -113,7 +121,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/create", method = RequestMethod.GET)
-    public String showCreatePostForm(ModelMap model) {
+    public String showCreatePostForm(ModelMap model) 
+    {
         model.addAttribute("post", new PostEditDto());
 
         model.addAttribute("edit", false);
@@ -123,7 +132,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/create", method = RequestMethod.POST)
-    public String createPost(ModelMap model, @Valid @ModelAttribute("post") PostEditDto post, BindingResult result) {
+    public String createPost(ModelMap model, @Valid @ModelAttribute("post") PostEditDto post, BindingResult result) 
+    {
         if (result.hasErrors()) {
             model.addAttribute("edit", false);
 
@@ -137,7 +147,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/{postId}/edit", method = RequestMethod.GET)
-    public String showEditPostForm(@PathVariable("postId") Long postId, ModelMap model) {
+    public String showEditPostForm(@PathVariable("postId") Long postId, ModelMap model) 
+    {
         PostEditDto post = postService.getEditablePost(postId);
 
         if (post == null)
@@ -153,7 +164,8 @@ public class PostsController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/{postId}/edit", method = RequestMethod.POST)
     public String updatePost(ModelMap model, @Valid @ModelAttribute("post") PostEditDto post, BindingResult result,
-                                   @PathVariable("postId") Long postId) {
+                                   @PathVariable("postId") Long postId) 
+    {
         post.setId(postId);
 
         if (result.hasErrors()) {
@@ -169,7 +181,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/{postId}/hide", method = RequestMethod.POST)
-    public @ResponseBody String hidePost(@PathVariable("postId") Long postId) {
+    public @ResponseBody String hidePost(@PathVariable("postId") Long postId) 
+    {
         postService.setPostVisibility(postId, true);
 
         return "ok";
@@ -177,7 +190,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/{postId}/unhide", method = RequestMethod.POST)
-    public @ResponseBody String unhidePost(@PathVariable("postId") Long postId) {
+    public @ResponseBody String unhidePost(@PathVariable("postId") Long postId) 
+    {
         postService.setPostVisibility(postId, false);
 
         return "ok";
@@ -185,7 +199,8 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/posts/{postId}/delete", method = RequestMethod.POST)
-    public @ResponseBody String deletePost(@PathVariable("postId") Long postId) {
+    public @ResponseBody String deletePost(@PathVariable("postId") Long postId) 
+    {
         postService.deletePost(postId);
 
         return "ok";
@@ -197,10 +212,13 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.POST)
-    public @ResponseBody String like(@PathVariable("postId") Long postId) {
-        try {
+    public @ResponseBody String like(@PathVariable("postId") Long postId) 
+    {
+        try 
+        {
             postService.vote(postId, true);
-        } catch (AlreadyVotedException e) {
+        } catch (AlreadyVotedException e) 
+        {
             return "already_voted";
         }
 
@@ -209,8 +227,10 @@ public class PostsController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/posts/{postId}/dislike", method = RequestMethod.POST)
-    public @ResponseBody String dislike(@PathVariable("postId") Long postId) {
-        try {
+    public @ResponseBody String dislike(@PathVariable("postId") Long postId) 
+    {
+        try 
+        {
             postService.vote(postId, false);
         } catch (AlreadyVotedException e) {
             return "already_voted";

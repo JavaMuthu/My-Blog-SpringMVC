@@ -11,25 +11,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nirmal.blog.service.UserService;
 
 @Controller
-public class LoginController {
+public class LoginController 
+{
 
     @Autowired
     private UserService userService;
 
     @RequestMapping(value = "/login_success", method= RequestMethod.GET)
-    public @ResponseBody String loginSuccess(HttpServletRequest request) {
+    public @ResponseBody String loginSuccess(HttpServletRequest request) 
+    {
         return "ok";
     }
 
     @RequestMapping(value = "/login_error", method= RequestMethod.GET)
-    public @ResponseBody String loginError(HttpServletRequest request) {
+    public @ResponseBody String loginError(HttpServletRequest request) 
+    {
         return "failed";
     }
 
     // POST request must be used for logout if CSRF enabled, so this page contains hidden form to submit via JS
     @RequestMapping(value = "/logout", method= RequestMethod.GET)
-    public String logout() {
-        if (!userService.isAuthenticated()) {
+    public String logout()
+    {
+        if (!userService.isAuthenticated())
+        {
             return "redirect:posts";
         }
 

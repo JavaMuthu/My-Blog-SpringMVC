@@ -1,8 +1,16 @@
 package com.nirmal.blog.service;
 
-public class AlreadyVotedException extends Exception {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public class AlreadyVotedException extends Exception 
+{
+	private static final long serialVersionUID = 1L;
 
-    public AlreadyVotedException(String message) {
+	public AlreadyVotedException(String message) 
+	{
         super(message);
     }
 }

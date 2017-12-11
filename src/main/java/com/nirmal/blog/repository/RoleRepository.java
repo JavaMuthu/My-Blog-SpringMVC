@@ -4,7 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nirmal.blog.model.Role;
 
-public interface RoleRepository extends JpaRepository<Role, Long> {
+/**
+ * 
+ * @author muthu_m
+ *
+ */
+public interface RoleRepository extends JpaRepository<Role, Long> 
+{
 
     Role findByName(String name);
 }
