@@ -4,7 +4,7 @@ Username/password auth, admin can add/edit/delete blog posts, users (after regis
 
 Can be useful for someone who is learning the techonologies/frameworks used here.
 
-The project is deployed here http://109.120.169.99:8080/blog, admin username/password — admin/pass123, the same password for other users, Alice/Bob/User1-5.
+The project is deployed here http://localhost:8080/blog, admin username/password — admin/pass123, the same password for other users, Alice/Bob/User1-5.
 
 - Spring MVC, Spring Security. Spring profiles.
 - Hibernate, MySQL database.
@@ -49,8 +49,8 @@ Requirements:
     <pre>&lt;bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"&gt;
         &lt;property name="driverClassName" value="<b>com.mysql.jdbc.Driver</b>" /&gt;
         &lt;property name="url" value="jdbc:<b>mysql://localhost:3306/blog</b>" /&gt;
-        &lt;property name="username" value="<b>BlogDbUser</b>" /&gt;
-        &lt;property name="password" value="<b>BlogDbPassword</b>" /&gt;
+        &lt;property name="username" value="<b>root</b>" /&gt;
+        &lt;property name="password" value="<b>root</b>" /&gt;
         ...
            &lt;entry key="hibernate.dialect" value="org.hibernate.dialect.<b>MySQL5Dialect</b>"/&gt;
            ...</pre>
